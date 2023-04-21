@@ -20,7 +20,7 @@ for caseNumber = 1:30
         disp(['Data will be extracted from: ',fname])
         info = dir(fname+"*.plt");
         if(isempty(info))
-            disp('        Err:--> Something is wrong - most probably the directory name');
+            disp('Err:--> Something is wrong - most probably the directory name');
             break;
         end
         % info = dir('fc*.plt');

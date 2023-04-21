@@ -31,8 +31,8 @@ userDefinedFolderOnly = 1;
 userDirCaseNumber = 0;
 if(userDefinedFolderOnly == 1)
     userDirCaseNumber = userDirCaseNumber + 1;
-    uDirName{userDirCaseNumber} = '';
-    uNameOfFolders{userDirCaseNumber} = '';
+    uDirName{userDirCaseNumber} = '/gpfs/research/engineering/as17r/ParametricStudy/AllCases2/latestVersion/';
+    uNameOfFolders{userDirCaseNumber} = 'newTahoeRigid28f';
     uSubfolders{userDirCaseNumber} = 'flow_output';
     %     userDirCaseNumber = userDirCaseNumber + 1;
     %     uDirName{userDirCaseNumber} = 'D:\CCNS\parametricStudy\AllCases2';
