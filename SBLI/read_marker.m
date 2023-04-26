@@ -32,7 +32,7 @@ userDirCaseNumber = 0;
 if(userDefinedFolderOnly == 1)
     userDirCaseNumber = userDirCaseNumber + 1;
     uDirName{userDirCaseNumber} = '/gpfs/research/engineering/as17r/ParametricStudy/AllCases2/latestVersion/';
-    uNameOfFolders{userDirCaseNumber} = 'newTahoeRigid28f';
+    uNameOfFolders{userDirCaseNumber} = 'newTahoeRigid28i';
     uSubfolders{userDirCaseNumber} = 'flow_output';
     %     userDirCaseNumber = userDirCaseNumber + 1;
     %     uDirName{userDirCaseNumber} = 'D:\CCNS\parametricStudy\AllCases2';
@@ -80,5 +80,5 @@ for caseNumber = 1: nFolder
         marker(:,:,i) = readmatrix(fullName, 'Range',[r1 c1 r2 c2]);
         disp(fullName);
     end
-    save(fullfile(fullDirName{caseNumber},'marker'),'marker');
+    save(fullfile(uDirName{caseNumber},uNameOfFolders{caseNumber},'marker'),'marker');
 end

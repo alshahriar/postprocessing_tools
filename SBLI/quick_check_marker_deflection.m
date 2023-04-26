@@ -1,8 +1,6 @@
 clear all
 
 if(isunix)
-    addpath('/gpfs/research/engineering/as17r/SBLI_Subroutines_Functions')
-else
     addpath('SBLI_Subroutines_Functions')
 end
 
@@ -34,11 +32,11 @@ maxDeflectionValue = 0.5;
 gamma = 1.4;
 pinf = 1/gamma;
 rhoinf = 1;
-timeIndexForRigid = 75;
+timeIndexForRigid = 75+127+183;
 T_r = 1.678;
 panelThickness = 0.5;
 panelLenght = 10;
-panelDensity = 1000;
+panelDensity = 1000;        
 panelLocationY = 1;
 poissionRatio = 0.45;
 
@@ -80,7 +78,7 @@ unE = length(un_T);
 
 nFolder = length(folderNames);
 totalNumberOfCases = length(folderNames);
-
+%%
 % prompt = ("what is the case number[1-15]?");
 % caseNumber = input(prompt);
 for caseNumber = 1:totalNumberOfCases
@@ -92,11 +90,14 @@ for caseNumber = 1:totalNumberOfCases
     
     delta = simParameters.delta;
     CauchyNumber(caseNumber) = rhoinf*(simParameters.Uinf^2)/tahoeParam.E;
-    %     originalMarker = marker; clear marker;
-    %     % Removing the part that is not flexibile
-    %     marker = originalMarker(:,:,timeIndexForRigid+1:end);
+    if(1)
+        originalMarker = marker; clear marker;
+        % Removing the part that is not flexibile
+        marker = originalMarker(:,:,timeIndexForRigid+1:end);
+    end
     nTime = length(marker(1,1,:));
     t_norm = simParameters.ntec*simParameters.dt*simParameters.Uinf/delta*(1:nTime);
+    t_norm = simParameters.ntec*simParameters.dt*(1:nTime);
 
     xx = marker(:,1,1);
     midLocation_x = 0.5*(xMarkerFlexE+xMarkerFlexS);
@@ -109,22 +110,18 @@ for caseNumber = 1:totalNumberOfCases
     pAtMiddle(:) = marker(midPointIndex,8,:);
     
     xLoc(:) = marker(midPointIndex,1,:);
-    averageDefatMiddle = mean(defAtMiddle(timeIndexForRigid+1:end));
-    maxDef = max(max(marker(:,2,timeIndexForRigid+1:end)));
-    minDef = min(min(marker(:,2,timeIndexForRigid+1:end)));
+    averageDefatMiddle = mean(defAtMiddle(1:end));
+    maxDef = max(max(marker(:,2,1:end)));
+    minDef = min(min(marker(:,2,1:end)));
     threshold = (maxDef - minDef) * 0.03;
     [peaks,peaksTimeIndex] = findpeaks(defAtMiddle,'MinPeakHeight',averageDefatMiddle);
     invertedDef = maxDef - defAtMiddle;
     [valleys,valleysTimeIndex] = findpeaks(invertedDef,'MinPeakHeight',maxDef - averageDefatMiddle);
     valleys = maxDef - valleys;
     
-    J = customcolormap([0 0.5 1], {'#00FF00','#ff0000','#0000FF'},nTime-timeIndexForRigid);   %
-    %       colorbar;
+    J = customcolormap([0 0.5 1], {'#00FF00','#ff0000','#0000FF'},nTime);   %
     color = colormap(J);
-    for i = 1:timeIndexForRigid
-        tempColor(i,1:3) = color(1,:);
-    end
-    color = [tempColor;color];
+    color = [color];
     
     rowsPlot = 2;
     colPlot = 2;
@@ -138,7 +135,7 @@ for caseNumber = 1:totalNumberOfCases
     for i = 1:step:nTime-step
         plot(t_norm(i:i+step),defAt3_4th(i:i+step),':','Color',color(i,:));
         hold on
-    end    
+    end
     % text(dt*peaksTimeIndex,peaks,'*')
     % text(dt*valleysTimeIndex,valleys,'*')
     titleText = sprintf('T_w = %2.2fT_r and E = %d (Case:%d)',n_T_Case(caseNumber),tahoeParam.E,caseNumber);
@@ -189,7 +186,7 @@ for caseNumber = 1:totalNumberOfCases
     end
     defAtMiddleAllCases{caseNumber}(:,1) = t_norm;
     defAtMiddleAllCases{caseNumber}(:,2) = defAtMiddle;
-    defAtMiddleAllCases{caseNumber}(:,3) = pAtMiddle;    
+    defAtMiddleAllCases{caseNumber}(:,3) = pAtMiddle;   
 end
 
 %% In frequency domain
@@ -197,9 +194,8 @@ if(1)
     figure;
     for caseNumber = 1:totalNumberOfCases
         [simParameters] = loadCaseData(dirName{caseNumber},folderNames{caseNumber});
-        tFlexiStart = simParameters.ntec*simParameters.dt*simParameters.Uinf/delta*timeIndexForRigid;
-        t = defAtMiddleAllCases{caseNumber}(timeIndexForRigid:end,1)-tFlexiStart;
-        d = defAtMiddleAllCases{caseNumber}(timeIndexForRigid:end,2);
+        t = defAtMiddleAllCases{caseNumber}(:,1);
+        d = defAtMiddleAllCases{caseNumber}(:,2);
         [freqvec,xdft] = x_f_PSD_2(t,d);
         plot(freqvec,abs(xdft)); hold on
         [sigr, coeffiecients] = fit_damped_sinewave((d-mean(d))');
@@ -230,7 +226,6 @@ end
 figure;
 for caseNumber = 1:totalNumberOfCases
     [simParameters] = loadCaseData(dirName{caseNumber},folderNames{caseNumber});
-    tFlexiStart = simParameters.ntec*simParameters.dt*simParameters.Uinf/delta*timeIndexForRigid;
     t = defAtMiddleAllCases{caseNumber}(1:end,1);
     d = defAtMiddleAllCases{caseNumber}(1:end,3);
     plot(t,(d-panelLocationY)/delta,colorS(caseNumber));
@@ -249,9 +244,8 @@ grid on
 if(0)
     caseNumber = 1;
     [simParameters] = loadCaseData(dirName{caseNumber},folderNames{caseNumber});
-    tFlexiStart = simParameters.ntec*simParameters.dt*simParameters.Uinf/delta*timeIndexForRigid;
-    t = defAtMiddleAllCases{caseNumber}(timeIndexForRigid:end,1)-tFlexiStart;
-    d = defAtMiddleAllCases{caseNumber}(timeIndexForRigid:end,2);
+    t = defAtMiddleAllCases{caseNumber}(:,1);
+    d = defAtMiddleAllCases{caseNumber}(:,2);
     
     % Part - 1
     t1v = 15480;
