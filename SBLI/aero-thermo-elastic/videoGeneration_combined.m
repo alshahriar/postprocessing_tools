@@ -24,7 +24,7 @@ dirName{caseNumber} = '/gpfs/home/as17r/engineering/ParametricStudy/AllCases2/Th
 folderNames{caseNumber} = "test33_2_rerun";
 load(fullfile(dirName{caseNumber},folderNames{caseNumber},'marker'),'marker');
 
-nImages = 1200;
+nImages = 120;
 t_norm = fluid.dt*fluid.ntec*U/a*(1:nImages);
 xx = marker(:,1,1);
 [~,midIndex] = min(abs(xx));
@@ -35,8 +35,8 @@ yMin = min([deflection;deflection2]);
 yMax = max([deflection;deflection2]);
 stride = 5;
 
-fullnameOutput = fullfile(dirLocOut,"combined.avi");
-outputVideo = VideoWriter(fullnameOutput);
+fullnameOutput = fullfile(dirLocOut,"combined");
+outputVideo = VideoWriter(fullnameOutput,"Uncompressed AVI");
 open(outputVideo)
 for idx = 1:stride:nImages
     imT = imread(fullfile(filesInfoT(idx).folder,filesInfoT(idx).name));

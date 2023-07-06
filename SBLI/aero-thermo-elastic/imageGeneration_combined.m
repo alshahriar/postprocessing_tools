@@ -34,7 +34,7 @@ deflection(:,1) = (marker(midIndex,2,40:nImages+40)-1)/a;
 deflection2(:,1) = (marker(three4Index,2,40:nImages+40)-1)/a;
 yMin = min([deflection;deflection2]);
 yMax = max([deflection;deflection2]);
-stride = 5;
+stride = 3;
 for idx = 1:stride:nImages
     imT = imread(fullfile(filesInfoT(idx).folder,filesInfoT(idx).name));
     imV = imread(fullfile(filesInfoV(idx).folder,filesInfoV(idx).name));
@@ -60,15 +60,28 @@ for idx = 1:stride:nImages
         im = cat(1,im,imd);
         im = imresize(im,0.5);
         [A,map] = rgb2ind(im,256);
-        if idx == 1
-            imwrite(A,map,fullnameOutput,"gif","LoopCount",Inf,"DelayTime",0.1);
-        else
-            if(t_norm(idx)<75)
-                imwrite(A,map,fullnameOutput,"gif","WriteMode","append","DelayTime",0.5);
+        if(1)
+            if idx == 1
+                imwrite(A,map,fullnameOutput,"gif","LoopCount",Inf,"DelayTime",0.25);
             else
-                imwrite(A,map,fullnameOutput,"gif","WriteMode","append","DelayTime",0.5);
+                if(t_norm(idx)<75)
+                    imwrite(A,map,fullnameOutput,"gif","WriteMode","append","DelayTime",0.25);
+                else
+                    imwrite(A,map,fullnameOutput,"gif","WriteMode","append","DelayTime",0.25);
+                end
+            end
+        else % not a good option
+            if idx == 1
+                imwrite(A,map,fullnameOutput,"hdf","Compression","jpeg");
+            else
+                if(t_norm(idx)<75)
+                    imwrite(A,map,fullnameOutput,"hdf","WriteMode","append");
+                else
+                    imwrite(A,map,fullnameOutput,"hdf","WriteMode","append");
+                end
             end
         end
+
     end
 end
 close;
